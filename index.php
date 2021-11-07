@@ -17,8 +17,8 @@
     <script type="text/javascript">
         var config = {
             type: Phaser.AUTO,
-            width: 800,
-            height: 600,
+            // width: 800,
+            // height: 600,
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -36,7 +36,8 @@
         };
 
         var game = new Phaser.Game(config);
-        var ground
+        var lifeCount = 3;
+        var gameOver = false;
 
         function preload() {
             //loading PNG map file
@@ -57,25 +58,29 @@
         }
 
         function create() {
+
+            // this.cameras.main.setBounds(0, 0, 12*16, 12*16);
+            this.physics.world.setBounds(0, 0, 176*16, 39*16);
+
             // create the Tilemap
             const map = this.make.tilemap({
                 key: 'tilemap'
             })
-
-            // add the tileset image we are using
             const tileset = map.addTilesetImage('1-1', 'image_1-1')
 
             //add layers
-            map.createStaticLayer('Background', tileset)
+            var background = map.createStaticLayer('Background', tileset)
+            var oob = map.createStaticLayer('OutOfBounds', tileset)
             var ground = map.createStaticLayer('Ground', tileset)
             map.createStaticLayer('Bushes', tileset)
             var tubes = map.createStaticLayer('Tubes', tileset)
             map.createStaticLayer('Shadows', tileset)
             map.createStaticLayer('Boxes', tileset)
 
-            //ground collision: https://stackoverflow.com/questions/34214162/creating-a-collision-layer-in-phaser-using-json-and-tiled
+            //creating collision with layers of tileset
             ground.setCollisionByExclusion([-1]);
             tubes.setCollisionByExclusion([-1]);
+            oob.setCollisionByExclusion([-1]);
 
             //load music
             backgroundMusic = this.sound.add('world1_background_music', {
@@ -86,9 +91,10 @@
             //add the player character, gives him collision
             player = this.physics.add.sprite(100, 350, 'smallmario');
             player.setCollideWorldBounds(true);
-            player.setBounce(0.1);
+            // player.setBounce(0.1);
             this.physics.add.collider(player, ground);
             this.physics.add.collider(player, tubes);
+            // this.physics.add.collider(player, oob, outOfBounds, null, this);
 
             cursors = this.input.keyboard.createCursorKeys();
 
@@ -107,7 +113,7 @@
                 key: 'turn',
                 frames: [{
                     key: 'smallmario',
-                    frame: 3
+                    frame: 2
                 }],
                 frameRate: 60
             });
@@ -121,6 +127,13 @@
                 frameRate: 10,
                 repeat: -1
             });
+
+            // this.cameras.main.setBounds(0, 0, 600, 600, [centerOn = true]);
+            // this.cameras.main.startFollow(this.player);
+            // this.world.setBounds(0,0, 176*16, 39*16);
+            // this.camera.follow(this.player);
+            // this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
+
 
         }
 
@@ -141,9 +154,16 @@
                 player.anims.play('turn');
             }
 
-            if (cursors.up.isDown && player.body.onFloor())
+            if (cursors.up.isDown && player.body.onFloor()) {
                 player.setVelocityY(-350);
+            }
+        }
 
+        function outOfBounds(player, oob) {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            if (lifeCount <= 0) gameOver = true;
+            else lifeCount--;
         }
     </script>
 </body>
