@@ -15,10 +15,14 @@
 <body>
 
     <script type="text/javascript">
+        var lifeCount = 3;
+        var gameOver = false;
+        var zoomFactor = 2;
+        
         var config = {
             type: Phaser.AUTO,
-            // width: 800,
-            // height: 600,
+            width: 256 * zoomFactor,
+            height: 224 * zoomFactor,
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -34,11 +38,9 @@
                 update: update
             }
         };
-
+        
         var game = new Phaser.Game(config);
-        var lifeCount = 3;
-        var gameOver = false;
-
+        
         function preload() {
             //loading PNG map file
             this.load.image('image_1-1', 'assets/map/1-1.png')
@@ -59,7 +61,6 @@
 
         function create() {
 
-            // this.cameras.main.setBounds(0, 0, 12*16, 12*16);
             this.physics.world.setBounds(0, 0, 176*16, 39*16);
 
             // create the Tilemap
@@ -89,12 +90,12 @@
             backgroundMusic.play();
 
             //add the player character, gives him collision
-            player = this.physics.add.sprite(100, 350, 'smallmario');
-            player.setCollideWorldBounds(true);
+            this.player = this.physics.add.sprite(100, 350, 'smallmario');
+            this.player.setCollideWorldBounds(true);
             // player.setBounce(0.1);
-            this.physics.add.collider(player, ground);
-            this.physics.add.collider(player, tubes);
-            // this.physics.add.collider(player, oob, outOfBounds, null, this);
+            this.physics.add.collider(this.player, ground);
+            this.physics.add.collider(this.player, tubes);
+            this.physics.add.collider(this.player, oob, outOfBounds, null, this);
 
             cursors = this.input.keyboard.createCursorKeys();
 
@@ -128,12 +129,11 @@
                 repeat: -1
             });
 
-            // this.cameras.main.setBounds(0, 0, 600, 600, [centerOn = true]);
-            // this.cameras.main.startFollow(this.player);
-            // this.world.setBounds(0,0, 176*16, 39*16);
-            // this.camera.follow(this.player);
-            // this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-
+            const cam = this.cameras.main;
+            cam.setViewport(0, 0, 256 * zoomFactor, 224 * zoomFactor);
+            cam.zoom = zoomFactor;
+            cam.startFollow(this.player, true, 0.075, 0.075);
+            
 
         }
 
@@ -143,19 +143,19 @@
             // }
 
             if (cursors.left.isDown) {
-                player.setVelocityX(-160);
-                player.anims.play('left', true);
+                this.player.setVelocityX(-160);
+                this.player.anims.play('left', true);
             } else if (cursors.right.isDown) {
-                player.setVelocityX(160);
-                player.anims.play('right', true);
+                this.player.setVelocityX(160);
+                this.player.anims.play('right', true);
             } else {
-                player.setVelocityX(0);
+                this.player.setVelocityX(0);
 
-                player.anims.play('turn');
+                this.player.anims.play('turn');
             }
 
-            if (cursors.up.isDown && player.body.onFloor()) {
-                player.setVelocityY(-350);
+            if (cursors.up.isDown && this.player.body.onFloor()) {
+                this.player.setVelocityY(-350);
             }
         }
 
