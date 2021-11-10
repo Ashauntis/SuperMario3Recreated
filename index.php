@@ -42,15 +42,8 @@
         var game = new Phaser.Game(config);
         
         function preload() {
-            //loading PNG map file
-            this.load.image('image_1-1', 'assets/map/1-1.png')
-
-            //loading JSON file
-            this.load.tilemapTiledJSON('tilemap', 'assets/map/1-1.json')
-
-            //load music
-            this.load.audio('world1_background_music', 'assets/sounds/world1.ogg');
-
+            <?php include 'includes/map_info.js'; ?>
+            <?php include 'includes/sounds.js'; ?>
 
             //load character
             this.load.spritesheet('smallmario', 'assets/characters/smallmariospritesheet.png', {
@@ -61,7 +54,7 @@
 
         function create() {
 
-            this.physics.world.setBounds(0, 0, 176*16, 39*16);
+            this.physics.world.setBounds(0, 0, 176*16, 28*16);
 
             // create the Tilemap
             const map = this.make.tilemap({
@@ -83,7 +76,7 @@
             tubes.setCollisionByExclusion([-1]);
             oob.setCollisionByExclusion([-1]);
 
-            //load music
+            //play music
             backgroundMusic = this.sound.add('world1_background_music', {
                 loop: true
             });
@@ -92,14 +85,12 @@
             //add the player character, gives him collision
             this.player = this.physics.add.sprite(100, 350, 'smallmario');
             this.player.setCollideWorldBounds(true);
-            // player.setBounce(0.1);
             this.physics.add.collider(this.player, ground);
             this.physics.add.collider(this.player, tubes);
             this.physics.add.collider(this.player, oob, outOfBounds, null, this);
 
+            //animations and controls
             cursors = this.input.keyboard.createCursorKeys();
-
-            //create animations
             this.anims.create({
                 key: 'left',
                 frames: this.anims.generateFrameNumbers('smallmario', {
@@ -128,8 +119,10 @@
                 frameRate: 10,
                 repeat: -1
             });
-
+            
+            //camera
             const cam = this.cameras.main;
+            cam.setBounds(0, 0, 176*16, 27*16)
             cam.setViewport(0, 0, 256 * zoomFactor, 224 * zoomFactor);
             cam.zoom = zoomFactor;
             cam.startFollow(this.player, true, 0.075, 0.075);
