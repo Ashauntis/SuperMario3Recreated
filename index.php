@@ -63,13 +63,13 @@
             const tileset = map.addTilesetImage('1-1', 'image_1-1')
 
             //add layers
-            var background = map.createStaticLayer('Background', tileset)
-            var oob = map.createStaticLayer('OutOfBounds', tileset)
-            var ground = map.createStaticLayer('Ground', tileset)
-            map.createStaticLayer('Bushes', tileset)
-            var tubes = map.createStaticLayer('Tubes', tileset)
-            map.createStaticLayer('Shadows', tileset)
-            map.createStaticLayer('Boxes', tileset)
+            var oob           = map.createStaticLayer('OutOfBounds', tileset)
+            var background    = map.createStaticLayer('Background', tileset)
+            var ground        = map.createStaticLayer('Ground', tileset)
+            var bushes        = map.createStaticLayer('Bushes', tileset)
+            var tubes         = map.createStaticLayer('Tubes', tileset)
+            var shadows       = map.createStaticLayer('Shadows', tileset)
+            var boxes         = map.createStaticLayer('Boxes', tileset)
 
             //creating collision with layers of tileset
             ground.setCollisionByExclusion([-1]);
@@ -83,7 +83,7 @@
             backgroundMusic.play();
 
             //add the player character, gives him collision
-            this.player = this.physics.add.sprite(100, 350, 'smallmario');
+            this.player = this.physics.add.sprite(1900, 350, 'smallmario');
             this.player.setCollideWorldBounds(true);
             this.physics.add.collider(this.player, ground);
             this.physics.add.collider(this.player, tubes);
