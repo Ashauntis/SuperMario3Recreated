@@ -1,0 +1,9 @@
+body {
+    margin: 0;
+    text-align: center;
+}
+
+html {
+    background-image: url('assets/misc/Mario-Wallpaper.png');
+    background-size: cover;
+}

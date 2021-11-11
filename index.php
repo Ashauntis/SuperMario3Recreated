@@ -5,11 +5,7 @@
     <meta charset="UTF-8" />
     <title>SM3 Recreated</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-    <style type="text/css">
-        body {
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -17,12 +13,11 @@
     <script type="text/javascript">
         var lifeCount = 3;
         var gameOver = false;
-        var zoomFactor = 2;
-        
+
         var config = {
             type: Phaser.AUTO,
-            width: 256 * zoomFactor,
-            height: 224 * zoomFactor,
+            width: 256,
+            height: 224,
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -38,12 +33,14 @@
                 update: update
             }
         };
-        
+
         var game = new Phaser.Game(config);
-        
+
         function preload() {
             <?php include 'includes/map_info.js'; ?>
             <?php include 'includes/sounds.js'; ?>
+
+            this.load.image('swimmingmario', 'assets/characters/swimmingmario/swimmingmario1.png')
 
             //load character
             this.load.spritesheet('smallmario', 'assets/characters/smallmariospritesheet.png', {
@@ -54,7 +51,7 @@
 
         function create() {
 
-            this.physics.world.setBounds(0, 0, 176*16, 28*16);
+            this.physics.world.setBounds(0, 0, 176 * 16, 28 * 16);
 
             // create the Tilemap
             const map = this.make.tilemap({
@@ -63,13 +60,13 @@
             const tileset = map.addTilesetImage('1-1', 'image_1-1')
 
             //add layers
-            var oob           = map.createStaticLayer('OutOfBounds', tileset)
-            var background    = map.createStaticLayer('Background', tileset)
-            var ground        = map.createStaticLayer('Ground', tileset)
-            var bushes        = map.createStaticLayer('Bushes', tileset)
-            var tubes         = map.createStaticLayer('Tubes', tileset)
-            var shadows       = map.createStaticLayer('Shadows', tileset)
-            var boxes         = map.createStaticLayer('Boxes', tileset)
+            var oob = map.createStaticLayer('OutOfBounds', tileset)
+            var background = map.createStaticLayer('Background', tileset)
+            var ground = map.createStaticLayer('Ground', tileset)
+            var bushes = map.createStaticLayer('Bushes', tileset)
+            var tubes = map.createStaticLayer('Tubes', tileset)
+            var shadows = map.createStaticLayer('Shadows', tileset)
+            var boxes = map.createStaticLayer('Boxes', tileset)
 
             //creating collision with layers of tileset
             ground.setCollisionByExclusion([-1]);
@@ -83,7 +80,7 @@
             backgroundMusic.play();
 
             //add the player character, gives him collision
-            this.player = this.physics.add.sprite(1900, 350, 'smallmario');
+            this.player = this.physics.add.sprite(50, 350, 'smallmario');
             this.player.setCollideWorldBounds(true);
             this.physics.add.collider(this.player, ground);
             this.physics.add.collider(this.player, tubes);
@@ -119,21 +116,35 @@
                 frameRate: 10,
                 repeat: -1
             });
-            
+
             //camera
             const cam = this.cameras.main;
-            cam.setBounds(0, 0, 176*16, 27*16)
-            cam.setViewport(0, 0, 256 * zoomFactor, 224 * zoomFactor);
-            cam.zoom = zoomFactor;
+            cam.setBounds(0, 0, 176 * 16, 27 * 16)
+            cam.setViewport(0, 0, 256 , 224);
+            cam.zoom = 2;
             cam.startFollow(this.player, true, 0.075, 0.075);
-            
+
+            // text
+            this.text = this.add.text(0,0).setText("x : 0, y : 0").setScrollFactor(0);
+
+            //UI
+
+            // this.add.text((15 * textMultiplier), 10 * textMultiplier, "We're making a UI!", {
+            //     font: "8px Arial",
+            //     fill: "#f26c4f",
+            //     align: "center"
+            // }).setScrollFactor(0);
+            // this.add.image(200, 200, 'swimmingmario').setScrollFactor(0);
+
 
         }
 
         function update() {
-            // if (gameOver) {
-            //     return;
-            // }
+
+            // const cam = this.cameras.main;
+            this.text.x = this.player.x;
+            this.text.y = this.player.y;
+            // this.text.setText([ 'x: ' + cam.scrollX, 'y: ' + cam.scrollY ]);
 
             if (cursors.left.isDown) {
                 this.player.setVelocityX(-160);
