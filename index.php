@@ -73,11 +73,13 @@
             tubes.setCollisionByExclusion([-1]);
             oob.setCollisionByExclusion([-1]);
 
-            //play music
-            backgroundMusic = this.sound.add('world1_background_music', {
+            //define and play music
+            this.backgroundMusic = this.sound.add('world1_background_music', {
                 loop: true
             });
-            backgroundMusic.play();
+            this.backgroundMusic.play();
+            this.jumpAudio = this.sound.add('jump-audio');
+            this.loseLife = this.sound.add('lose-life-audio');
 
             //add the player character, gives him collision
             this.player = this.physics.add.sprite(50, 350, 'smallmario');
@@ -159,13 +161,16 @@
             }
 
             if (cursors.up.isDown && this.player.body.onFloor()) {
+                this.jumpAudio.play();
                 this.player.setVelocityY(-350);
             }
         }
 
         function outOfBounds(player, oob) {
             this.physics.pause();
+            this.backgroundMusic.stop();
             player.setTint(0xff0000);
+            this.loseLife.play();
             if (lifeCount <= 0) gameOver = true;
             else lifeCount--;
         }
