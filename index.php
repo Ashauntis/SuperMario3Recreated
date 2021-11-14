@@ -13,11 +13,12 @@
     <script type="text/javascript">
         var lifeCount = 3;
         var gameOver = false;
+        var gameScale = 2
 
         var config = {
             type: Phaser.AUTO,
-            width: 256,
-            height: 224,
+            width: 256 * gameScale,
+            height: 224 * gameScale,
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -35,12 +36,10 @@
         };
 
         var game = new Phaser.Game(config);
-
+        
         function preload() {
             <?php include 'includes/map_info.js'; ?>
             <?php include 'includes/sounds.js'; ?>
-
-            this.load.image('swimmingmario', 'assets/characters/swimmingmario/swimmingmario1.png')
 
             //load character
             this.load.spritesheet('smallmario', 'assets/characters/smallmariospritesheet.png', {
@@ -122,7 +121,7 @@
             //camera
             const cam = this.cameras.main;
             cam.setBounds(0, 0, 176 * 16, 27 * 16)
-            cam.setViewport(0, 0, 256 , 224);
+            cam.setViewport(0, 0, 256 * gameScale , 224 * gameScale);
             cam.zoom = 2;
             cam.startFollow(this.player, true, 0.075, 0.075);
 
