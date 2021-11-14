@@ -13,7 +13,7 @@
     <script type="text/javascript">
         var lifeCount = 3;
         var gameOver = false;
-        var gameScale = 2
+        var gameScale = 3
 
         var config = {
             type: Phaser.AUTO,
@@ -122,7 +122,7 @@
             const cam = this.cameras.main;
             cam.setBounds(0, 0, 176 * 16, 27 * 16)
             cam.setViewport(0, 0, 256 * gameScale , 224 * gameScale);
-            cam.zoom = 2;
+            cam.zoom = gameScale;
             cam.startFollow(this.player, true, 0.075, 0.075);
 
             // text
