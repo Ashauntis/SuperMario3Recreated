@@ -6,4 +6,5 @@ body {
 html {
     background-image: url('assets/misc/Mario-Wallpaper.png');
     background-size: cover;
+    background-repeat: no-repeat;
 }

@@ -11,10 +11,15 @@
 <body>
 
     <script type="text/javascript">
-        var lifeCount = 3;
-        var gameOver = false;
-        var gameScale = 3
 
+        // var Level11 = require('./scenes/level1-1.js');
+        // import { Level1 } from './scenes/level1-1.js';
+        // var Level1 = import('./scenes/level1-1.js');
+
+        var lifeCount = 3;
+        var gameScale = 3;
+        var frameCounter = 0
+        
         var config = {
             type: Phaser.AUTO,
             width: 256 * gameScale,
@@ -28,7 +33,8 @@
                     debug: false
                 }
             },
-            scene: {
+            scene: 
+            {
                 preload: preload,
                 create: create,
                 update: update
@@ -40,6 +46,7 @@
         function preload() {
             <?php include 'includes/map_info.js'; ?>
             <?php include 'includes/sounds.js'; ?>
+            <?php include 'includes/images.js'; ?>
 
             //load character
             this.load.spritesheet('smallmario', 'assets/characters/smallmariospritesheet.png', {
@@ -80,12 +87,19 @@
             this.jumpAudio = this.sound.add('jump-audio');
             this.loseLife = this.sound.add('lose-life-audio');
 
+            //winBox
+            this.winBox = [
+                this.add.image(2696, 344, 'mushroom-box'),
+                this.add.image(2696, 344, 'flower-box'),
+                this.add.image(2696, 344, 'star-box')
+            ];
             //add the player character, gives him collision
-            this.player = this.physics.add.sprite(50, 350, 'smallmario');
+            this.player = this.physics.add.sprite(50, 408, 'smallmario');
             this.player.setCollideWorldBounds(true);
             this.physics.add.collider(this.player, ground);
             this.physics.add.collider(this.player, tubes);
             this.physics.add.collider(this.player, oob, outOfBounds, null, this);
+
 
             //animations and controls
             cursors = this.input.keyboard.createCursorKeys();
@@ -117,6 +131,16 @@
                 frameRate: 10,
                 repeat: -1
             });
+            
+            this.anims.create({
+                key: 'jump-right',
+                frames: [{
+                    key: 'smallmario',
+                    frame: 6
+                }],
+                frameRate: 60,
+                repeat: -1
+            })
 
             //camera
             const cam = this.cameras.main;
@@ -126,26 +150,29 @@
             cam.startFollow(this.player, true, 0.075, 0.075);
 
             // text
-            this.text = this.add.text(0,0).setText("x : 0, y : 0").setScrollFactor(0);
+            this.text = this.add.text(0,0).setText(frameCounter).setScrollFactor(0);
 
             //UI
-
-            // this.add.text((15 * textMultiplier), 10 * textMultiplier, "We're making a UI!", {
-            //     font: "8px Arial",
-            //     fill: "#f26c4f",
-            //     align: "center"
-            // }).setScrollFactor(0);
-            // this.add.image(200, 200, 'swimmingmario').setScrollFactor(0);
-
 
         }
 
         function update() {
+            
+            frameCounter++;
+            
+            this.text.x = this.cameras.main.x;
+            this.text.y = this.cameras.main.y;
+            
+            this.text.setText(frameCounter);
 
-            // const cam = this.cameras.main;
-            this.text.x = this.player.x;
-            this.text.y = this.player.y;
-            // this.text.setText([ 'x: ' + cam.scrollX, 'y: ' + cam.scrollY ]);
+            this.winBox[0].setVisible(false);
+            this.winBox[1].setVisible(false);
+            this.winBox[2].setVisible(false);
+
+            idx = Math.floor(frameCounter / 8) % 3;
+            this.winBox[idx].setVisible(true);
+
+            
 
             if (cursors.left.isDown) {
                 this.player.setVelocityX(-160);
@@ -162,6 +189,7 @@
             if (cursors.up.isDown && this.player.body.onFloor()) {
                 this.jumpAudio.play();
                 this.player.setVelocityY(-350);
+                this.player.anims.play('jump-right', true);
             }
         }
 
