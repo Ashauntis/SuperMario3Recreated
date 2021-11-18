@@ -11,7 +11,6 @@
 <body>
 
     <script type="text/javascript">
-
         // var Level11 = require('./scenes/level1-1.js');
         // import { Level1 } from './scenes/level1-1.js';
         // var Level1 = import('./scenes/level1-1.js');
@@ -19,7 +18,7 @@
         var lifeCount = 3;
         var gameScale = 3;
         var frameCounter = 0
-        
+
         var config = {
             type: Phaser.AUTO,
             width: 256 * gameScale,
@@ -33,8 +32,7 @@
                     debug: false
                 }
             },
-            scene: 
-            {
+            scene: {
                 preload: preload,
                 create: create,
                 update: update
@@ -42,11 +40,18 @@
         };
 
         var game = new Phaser.Game(config);
-        
+
         function preload() {
-            <?php include 'includes/map_info.js'; ?>
-            <?php include 'includes/sounds.js'; ?>
-            <?php include 'includes/images.js'; ?>
+            this.load.image('image_1-1', 'assets/map/1-1.png');
+            this.load.tilemapTiledJSON('tilemap', 'assets/map/1-1.json');
+            this.load.audio('world1_background_music', 'assets/sounds/world1.ogg');
+            this.load.audio('jump-audio', 'assets/sounds/jump.ogg');
+            this.load.audio('lose-life-audio', 'assets/sounds/lose-life.ogg');
+            this.load.image('jump-right', 'assets/characters/smallmario/jump-right');
+            this.load.image('flower-box', 'assets/misc/win-screen-sprites/flower-box.png');
+            this.load.image('mushroom-box', 'assets/misc/win-screen-sprites/mushroom-box.png');
+            this.load.image('star-box', 'assets/misc/win-screen-sprites/star-box.png');
+
 
             //load character
             this.load.spritesheet('smallmario', 'assets/characters/smallmariospritesheet.png', {
@@ -131,7 +136,7 @@
                 frameRate: 10,
                 repeat: -1
             });
-            
+
             this.anims.create({
                 key: 'jump-right',
                 frames: [{
@@ -145,24 +150,24 @@
             //camera
             const cam = this.cameras.main;
             cam.setBounds(0, 0, 176 * 16, 27 * 16)
-            cam.setViewport(0, 0, 256 * gameScale , 224 * gameScale);
+            cam.setViewport(0, 0, 256 * gameScale, 224 * gameScale);
             cam.zoom = gameScale;
             cam.startFollow(this.player, true, 0.075, 0.075);
 
             // text
-            this.text = this.add.text(0,0).setText(frameCounter).setScrollFactor(0);
+            this.text = this.add.text(0, 0).setText(frameCounter).setScrollFactor(0);
 
             //UI
 
         }
 
         function update() {
-            
+
             frameCounter++;
-            
+
             this.text.x = this.cameras.main.x;
             this.text.y = this.cameras.main.y;
-            
+
             this.text.setText(frameCounter);
 
             this.winBox[0].setVisible(false);
@@ -172,7 +177,7 @@
             idx = Math.floor(frameCounter / 8) % 3;
             this.winBox[idx].setVisible(true);
 
-            
+
 
             if (cursors.left.isDown) {
                 this.player.setVelocityX(-160);
